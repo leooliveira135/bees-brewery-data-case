@@ -208,3 +208,7 @@ __marimo__/
 
 logs/
 config/
+
+*.lock*
+*.tfstate*
+.terraform/
