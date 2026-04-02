@@ -1,6 +1,5 @@
 import os
-from src.config.settings import s3_bronze_bucket, s3_silver_bucket, schema
-from src.aws.get_credentials import get_aws_connection_info
+from src.setup.settings import s3_bronze_bucket, s3_silver_bucket, schema
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import current_date, col, trim
 

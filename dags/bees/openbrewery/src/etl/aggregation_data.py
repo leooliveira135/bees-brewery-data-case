@@ -1,4 +1,4 @@
-from src.config.settings import s3_silver_bucket
+from src.setup.settings import s3_silver_bucket
 from pyspark.sql import SparkSession, DataFrame
 
 def read_data(spark: SparkSession):

@@ -1,5 +1,5 @@
 import requests
-from src.config.settings import endpoint, s3_bronze_bucket
+from src.setup.settings import endpoint, s3_bronze_bucket
 from aws.s3_loader import upload_to_s3
 
 def fetch_data(endpoint):

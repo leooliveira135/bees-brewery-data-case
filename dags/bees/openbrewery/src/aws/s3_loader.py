@@ -18,19 +18,3 @@ def upload_to_s3(file_data, bucket_name, object_name):
         key=object_name
     )
     print(f"File uploaded to s3://{bucket_name}/{object_name}")
-
-def download_from_s3(bucket_name, object_name):
-    """
-        Downloads a file from an S3 bucket. The function takes the bucket name and object name as parameters, and uses the S3Hook from Airflow's Amazon provider to handle the download process. This function is essential for retrieving the raw brewery data from the S3 bronze bucket for processing in the ETL pipeline.
-        Args:
-            bucket_name (str): The name of the S3 bucket from which the file will be downloaded.
-            object_name (str): The key or name of the object in the S3 bucket to be downloaded.
-        returns:
-            str: The content of the downloaded file as a string.
-    """
-    s3_hook = S3Hook(aws_conn_id='aws-airflow')
-    print(f"Downloading file from s3://{bucket_name}/{object_name}")
-    return s3_hook.read_key(
-        bucket_name=bucket_name,
-        key=object_name
-    )
