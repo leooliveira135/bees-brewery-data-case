@@ -207,7 +207,7 @@ marimo/_lsp/
 __marimo__/
 
 logs/
-config/
+*config/
 
 *.lock*
 *.tfstate*
