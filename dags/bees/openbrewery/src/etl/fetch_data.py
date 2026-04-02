@@ -12,16 +12,20 @@ def fetch_data(endpoint):
         Returns:
             list: A list of brewery data fetched from the API.
     """
-    response = requests.get(endpoint)
-    output = []
-    for i in range(1, 1000):  # Arbitrary large number to ensure we fetch all pages
-        print(f"Fetching page {i}...")
-        response = requests.get(endpoint.format(page=i))
-        output.extend(response.json())
-    if response.status_code == 200:
-        return output
-    else:
-        raise Exception(f"Failed to fetch data: {response.status_code}")
+    try:
+        response = requests.get(endpoint)
+        output = []
+        for i in range(1, 1000):  # Arbitrary large number to ensure we fetch all pages
+            print(f"Fetching page {i}...")
+            response = requests.get(endpoint.format(page=i))
+            output.extend(response.json())
+        if response.status_code == 200:
+            return output
+        else:
+            raise Exception(f"Failed to fetch data: {response.status_code}")
+    except Exception as e:
+        print(f"An error occurred while fetching data: {e}")
+        return []
     
 def main():
     """

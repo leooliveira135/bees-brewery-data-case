@@ -1,4 +1,4 @@
-from src.setup.settings import s3_silver_bucket
+from src.setup.settings import s3_silver_bucket, s3_gold_bucket
 from pyspark.sql import SparkSession, DataFrame
 
 def read_data(spark: SparkSession):
@@ -32,7 +32,7 @@ def write_aggregated_data(df: DataFrame):
         Args:
             df (DataFrame): The Spark DataFrame containing the aggregated brewery data.
     """
-    df.write.format("delta").mode("overwrite").partitionBy("brewery_type", "country").save(f"s3a://{s3_silver_bucket}/openbrewery_aggregated_db")
+    df.write.format("delta").mode("overwrite").partitionBy("brewery_type", "country").save(f"s3a://{s3_gold_bucket}/openbrewery_aggregated_db")
 
 def main(spark: SparkSession):
     """
