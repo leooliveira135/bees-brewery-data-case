@@ -1,5 +1,6 @@
 from airflow import DAG
 from airflow.operators.python import PythonVirtualenvOperator
+from datetime import datetime
 
 def extract():
     """
@@ -27,13 +28,13 @@ def load():
 
 with DAG(
     dag_id='openbrewery',
-    schedule_interval='@daily',
-    start_date='2026-04-01',
+    schedule='@daily',
+    start_date = datetime(2026, 4, 1),
     catchup=False,
     tags=['bees', 'openbrewery']
 ) as dag:
     extract_task = PythonVirtualenvOperator(
-        task_id='extract data from API',
+        task_id='extract_data_from_API',
         python_callable=extract,
         requirements="requirements.txt",
         on_success_callback=lambda context: print("Extract task completed successfully!"),
@@ -45,7 +46,7 @@ with DAG(
     """
 
     transform_task = PythonVirtualenvOperator(
-        task_id='transform data and load to data warehouse',
+        task_id='transform_data_and_load_to_data_warehouse',
         python_callable=transform,
         on_success_callback=lambda context: print("Transform task completed successfully!"),
         on_failure_callback=lambda context: print("Transform task failed!")
@@ -56,7 +57,7 @@ with DAG(
     """
 
     load_task = PythonVirtualenvOperator(
-        task_id='load data to data warehouse and aggregate',
+        task_id='load_data_to_data_warehouse_and_aggregate',
         python_callable=load,
         on_success_callback=lambda context: print("Load task completed successfully!"),
         on_failure_callback=lambda context: print("Load task failed!")
