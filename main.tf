@@ -237,14 +237,14 @@ resource "aws_iam_policy" "athena_glue_policy" {
   })
 }
 
-# Attach policy to the terraform-aws user
+# Attach policy to the bees-aws user
 resource "aws_iam_user_policy_attachment" "terraform_aws_policy" {
   for_each = local.users
   user       = aws_iam_user.create_user[each.key].name
   policy_arn = aws_iam_policy.athena_glue_policy.arn
 }
 
-# Attach AdministratorAccess to the existing terraform-aws user
+# Attach AdministratorAccess to the existing bees-aws user
 resource "aws_iam_user_policy_attachment" "admin_fix" {
   for_each = local.users
 
