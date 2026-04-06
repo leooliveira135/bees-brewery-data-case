@@ -72,6 +72,7 @@ x-airflow-common:
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     # The following line can be used to set a custom config file, stored in the local config folder
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
+    PYTHONPATH: /opt/airflow/dags/bees/openbrewery
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
@@ -222,7 +223,7 @@ services:
         one_meg=1048576
         mem_available=$$(($$(getconf _PHYS_PAGES) * $$(getconf PAGE_SIZE) / one_meg))
         cpus_available=$$(grep -cE 'cpu[0-9]+' /proc/stat)
-        disk_available=$$(df / | tail -1 | awk '{print $$4}')
+        disk_available=$$(df / | tail -1 | awk '{logging.info $$4}')
         warning_resources="false"
         if (( mem_available < 4000 )) ; then
           echo

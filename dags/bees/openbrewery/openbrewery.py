@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.operators.python import PythonVirtualenvOperator
+from airflow.operators.python import PythonOperator
 from datetime import datetime
 
 def extract():
@@ -33,28 +33,27 @@ with DAG(
     catchup=False,
     tags=['api', 'bees', 'openbrewery']
 ) as dag:
-    extract_task = PythonVirtualenvOperator(
+    extract_task = PythonOperator(
         task_id='extract_data_from_API',
-        python_callable=extract,
+        python_callable=extract
     )
     extract_task.doc_md = """
     ### Extract Task
     This task is responsible for extracting data from the Open Brewery DB API and loading it into a staging area. It uses the `fetch_data` function from the `src.etl.fetch_data` module to perform the extraction.
     """
 
-    transform_task = PythonVirtualenvOperator(
+    transform_task = PythonOperator(
         task_id='transform_data_and_load_to_data_warehouse',
-        python_callable=transform,
+        python_callable=transform
     )
     transform_task.doc_md = """
     ### Transform Task
     This task is responsible for transforming the extracted data and loading it into the data warehouse. It uses the `transform_data` function from the `src.etl.transformation_data` module to perform the transformation.
     """
 
-    load_task = PythonVirtualenvOperator(
+    load_task = PythonOperator(
         task_id='load_data_to_data_warehouse_and_aggregate',
-        python_callable=load,
-        on_success_callback=lambda context: print("Load task completed successfully!"),
+        python_callable=load
     )
     load_task.doc_md = """
     ### Load Task

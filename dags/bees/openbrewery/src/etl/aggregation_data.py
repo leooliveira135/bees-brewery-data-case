@@ -1,4 +1,4 @@
-import os
+import logging
 from src.setup.settings import s3_silver_bucket, s3_gold_bucket, aws_glue_role
 from src.aws.glue_catalog import create_glue_database, create_glue_crawler, start_glue_crawler, list_glue_db_tables
 from src.aws.airflow_connection import get_aws_connection_info
@@ -24,8 +24,8 @@ def aggregate_data(df: DataFrame):
             DataFrame: A Spark DataFrame containing the aggregated brewery data, with columns for state and brewery count.
     """
     aggregated_df = df.groupBy("brewery_type", "country", "state").agg({"*": "count"}.alias("brewery_count"))
-    print(f"Total states with breweries: {aggregated_df.count()}")
-    print("Sample of aggregated data:")
+    logging.info(f"Total states with breweries: {aggregated_df.count()}")
+    logging.info("Sample of aggregated data:")
     aggregated_df.show(5)
     return aggregated_df
 
@@ -53,7 +53,7 @@ def create_glue_gold_catalog():
     )
     start_glue_crawler(crawler_name="openbrewery_gold_crawler", aws_region=region_name)
     tables = list_glue_db_tables(database_name="openbrewery_gold_db", aws_region=region_name)
-    print(f"Tables in Glue database 'openbrewery_gold_db': {tables}")
+    logging.info(f"Tables in Glue database 'openbrewery_gold_db': {tables}")
 
 def main(spark: SparkSession):
     """

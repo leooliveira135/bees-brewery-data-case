@@ -1,3 +1,4 @@
+import logging
 from src.aws.athena_queries import (
     athena_wait_for_query_completion, 
     create_athena_client, 
@@ -27,15 +28,15 @@ def execute_athena_query(query: str, output_location: str):
 
 def main():
     """
-        Main function to execute an Athena query and print the results.
-        This function defines a sample SQL query to retrieve data from the Open Brewery database in Athena. It then calls the execute_athena_query function to run the query and retrieves the results. Finally, it prints the query results to the console.
+        Main function to execute an Athena query and logging.info the results.
+        This function defines a sample SQL query to retrieve data from the Open Brewery database in Athena. It then calls the execute_athena_query function to run the query and retrieves the results. Finally, it logging.infos the query results to the console.
     """
     query = "SELECT * FROM openbrewery_gold_db.openbrewery_aggregated_db;"
     output_location = athena_output_queries
     results = execute_athena_query(query=query, output_location=output_location)
-    print("Athena Query Results:")
+    logging.info("Athena Query Results:")
     for row in results:
-        print(row)
+        logging.info(row)
 
 if __name__ == "__main__":
     main()

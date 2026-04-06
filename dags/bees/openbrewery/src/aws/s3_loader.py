@@ -1,4 +1,5 @@
 import json
+import logging
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
 def upload_to_s3(file_data, bucket_name, object_name):
@@ -9,7 +10,7 @@ def upload_to_s3(file_data, bucket_name, object_name):
             bucket_name (str): The name of the S3 bucket where the file will be uploaded.
             object_name (str): The key or name of the object in the S3 bucket under which the file will be stored.
         returns:
-            None: This function does not return any value. It performs the action of uploading the file to S3 and prints a confirmation message upon successful upload.
+            None: This function does not return any value. It performs the action of uploading the file to S3 and logging.infos a confirmation message upon successful upload.
     """
     s3_hook = S3Hook(aws_conn_id='aws-airflow')
     s3_hook.load_string(
@@ -17,4 +18,4 @@ def upload_to_s3(file_data, bucket_name, object_name):
         bucket_name=bucket_name,
         key=object_name
     )
-    print(f"File uploaded to s3://{bucket_name}/{object_name}")
+    logging.info(f"File uploaded to s3://{bucket_name}/{object_name}")

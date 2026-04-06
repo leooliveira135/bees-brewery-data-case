@@ -1,4 +1,4 @@
-import os
+import logging
 from src.setup.settings import s3_bronze_bucket, s3_silver_bucket, schema, aws_glue_role
 from src.aws.glue_catalog import create_glue_database, create_glue_crawler, start_glue_crawler, list_glue_db_tables
 from src.aws.airflow_connection import get_aws_connection_info
@@ -44,7 +44,7 @@ def create_glue_silver_catalog():
     )
     start_glue_crawler(crawler_name="openbrewery_silver_crawler", aws_region=region_name)
     tables = list_glue_db_tables(database_name="openbrewery_silver_db", aws_region=region_name)
-    print(f"Tables in Glue database 'openbrewery_silver_db': {tables}")
+    logging.info(f"Tables in Glue database 'openbrewery_silver_db': {tables}")
 
 def main(spark: SparkSession):
     """
@@ -53,7 +53,7 @@ def main(spark: SparkSession):
             spark (SparkSession): The Spark session.
     """
     transformed_data = transform_data(spark, schema)
-    print(f"Total breweries after transformation: {transformed_data.count()}")
+    logging.info(f"Total breweries after transformation: {transformed_data.count()}")
     write_to_datalake(transformed_data)
     create_glue_silver_catalog()
 
