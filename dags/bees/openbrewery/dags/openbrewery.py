@@ -31,40 +31,34 @@ with DAG(
     schedule='@daily',
     start_date = datetime(2026, 4, 1),
     catchup=False,
-    tags=['bees', 'openbrewery']
+    tags=['api', 'bees', 'openbrewery']
 ) as dag:
     extract_task = PythonVirtualenvOperator(
         task_id='extract_data_from_API',
         python_callable=extract,
-        requirements="requirements.txt",
-        on_success_callback=lambda context: print("Extract task completed successfully!"),
-        on_failure_callback=lambda context: print("Extract task failed!"),
     )
     extract_task.doc_md = """
     ### Extract Task
-    This task is responsible for extracting data from the Open Brewery DB API and loading it into a staging area. It uses the `fetch_data` function from the `src.etl.fetch_data` module to perform the extraction. The task is scheduled to run daily and will print a success or failure message upon completion.
+    This task is responsible for extracting data from the Open Brewery DB API and loading it into a staging area. It uses the `fetch_data` function from the `src.etl.fetch_data` module to perform the extraction.
     """
 
     transform_task = PythonVirtualenvOperator(
         task_id='transform_data_and_load_to_data_warehouse',
         python_callable=transform,
-        on_success_callback=lambda context: print("Transform task completed successfully!"),
-        on_failure_callback=lambda context: print("Transform task failed!")
     )
     transform_task.doc_md = """
     ### Transform Task
-    This task is responsible for transforming the extracted data and loading it into the data warehouse. It uses the `transform_data` function from the `src.etl.transformation_data` module to perform the transformation. The task is scheduled to run daily and will print a success or failure message upon completion.
+    This task is responsible for transforming the extracted data and loading it into the data warehouse. It uses the `transform_data` function from the `src.etl.transformation_data` module to perform the transformation.
     """
 
     load_task = PythonVirtualenvOperator(
         task_id='load_data_to_data_warehouse_and_aggregate',
         python_callable=load,
         on_success_callback=lambda context: print("Load task completed successfully!"),
-        on_failure_callback=lambda context: print("Load task failed!")
     )
     load_task.doc_md = """
     ### Load Task
-    This task is responsible for loading the transformed data into the data warehouse and performing aggregation. It uses the `load_data` function from the `src.etl.aggregation_data` module to perform the loading and aggregation. The task is scheduled to run daily and will print a success or failure message upon completion.
+    This task is responsible for loading the transformed data into the data warehouse and performing aggregation. It uses the `load_data` function from the `src.etl.aggregation_data` module to perform the loading and aggregation.
     """
 
     dag.doc_md = """
@@ -81,7 +75,7 @@ with DAG(
     - start_date: `2026-04-01`
     - catchup: `False`
 
-    Tags: `bees`, `openbrewery`
+    Tags: `api`, `bees`, `openbrewery`
     """
 
     extract_task >> transform_task >> load_task

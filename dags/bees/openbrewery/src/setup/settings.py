@@ -24,3 +24,7 @@ schema = StructType([
     StructField("street", StringType(), True),
     StructField("website_url", StringType(), True),
 ])
+
+aws_glue_role = "glue-crawler-role"
+
+athena_output_queries = "s3://bees-openbrewerydb-gold/athena/"

@@ -1,4 +1,7 @@
-from src.setup.settings import s3_silver_bucket, s3_gold_bucket
+import os
+from src.setup.settings import s3_silver_bucket, s3_gold_bucket, aws_glue_role
+from src.aws.glue_catalog import create_glue_database, create_glue_crawler, start_glue_crawler, list_glue_db_tables
+from src.aws.airflow_connection import get_aws_connection_info
 from pyspark.sql import SparkSession, DataFrame
 
 def read_data(spark: SparkSession):
@@ -34,6 +37,24 @@ def write_aggregated_data(df: DataFrame):
     """
     df.write.format("delta").mode("overwrite").partitionBy("brewery_type", "country").save(f"s3a://{s3_gold_bucket}/openbrewery_aggregated_db")
 
+def create_glue_gold_catalog():
+    """
+        Creates a Glue Catalog table for the aggregated brewery data in the gold layer.
+        This function defines the schema for the aggregated brewery data and creates a Glue Catalog table in the specified database. The table is created with the appropriate columns and data types to store the aggregated brewery information effectively. This allows for easy querying and analysis of the aggregated brewery data using AWS Glue and Athena.
+    """
+    _, _, region_name = get_aws_connection_info()
+    create_glue_database(database_name="openbrewery_gold_db", aws_region=region_name)
+    create_glue_crawler(
+        crawler_name="openbrewery_gold_crawler",
+        role_arn=aws_glue_role,
+        database_name="openbrewery_gold_db",
+        s3_path=f"s3a://{s3_gold_bucket}/openbrewery_aggregated_db",
+        aws_region=region_name
+    )
+    start_glue_crawler(crawler_name="openbrewery_gold_crawler", aws_region=region_name)
+    tables = list_glue_db_tables(database_name="openbrewery_gold_db", aws_region=region_name)
+    print(f"Tables in Glue database 'openbrewery_gold_db': {tables}")
+
 def main(spark: SparkSession):
     """
         Main function to orchestrate the data aggregation process.
@@ -43,6 +64,7 @@ def main(spark: SparkSession):
     transformed_data = read_data(spark)
     aggregated_data = aggregate_data(transformed_data)
     write_aggregated_data(aggregated_data)
+    create_glue_gold_catalog()
 
 if __name__ == "__main__":
     spark = SparkSession.builder \
